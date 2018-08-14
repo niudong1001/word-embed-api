@@ -15,8 +15,8 @@ def fetch_model(word):
     return res
 
 
-def fetch_vocab(page_number, page_size=100):
-    url = baseurl + "vocab?page_size="+str(page_size)+"&page_number="+str(page_number)
+def fetch_vocab(page_number, page_size=100, shuffle="False"):
+    url = baseurl + "vocab?page_size="+str(page_size)+"&page_number="+str(page_number)+"&shuffle="+str(shuffle)
     req = urllib.request.urlopen(url)
     res = json.loads(req.read())[1:-1]  # a str, remove "
     # print(type(res))
@@ -33,5 +33,5 @@ def fetch_vocab_size():
 
 if __name__ == "__main__":
     print(fetch_model(word="the"))
-    print(fetch_vocab(page_number=0))
+    print(fetch_vocab(page_number=0, shuffle="False"))
     print(fetch_vocab_size())

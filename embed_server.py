@@ -5,6 +5,8 @@ from gensim.models.word2vec import Word2Vec
 import argparse
 import json
 import numpy as np
+import random
+
 
 parser = reqparse.RequestParser()
 app = Flask(__name__)
@@ -45,9 +47,16 @@ class Vocab(Resource):
             parse = reqparse.RequestParser()
             parse.add_argument("page_number", type=int, help="Page number", default=0)
             parse.add_argument("page_size", type=int, help="Page size", default=100)
+            parse.add_argument("shuffle", type=str, help="If shuffle the vocab", default="False")
             _args = parse.parse_args()
+            # print(_args["shuffle"])
+            if _args["shuffle"] == "True":
+                random.shuffle(words_shuffle)
+                __words = words_shuffle
+            else:
+                __words = words
             start_index = _args["page_number"]*_args["page_size"]
-            _words = words[start_index:start_index+_args["page_size"]]
+            _words = __words[start_index:start_index+_args["page_size"]]
             _words = " ".join(_words).strip()
             res = json.dumps(_words, ensure_ascii=False)
             # print(res)
@@ -69,6 +78,7 @@ if __name__ == "__main__":
 
     global model
     global words
+    global words_shuffle
     # parse argument
     p = argparse.ArgumentParser()
     p.add_argument("--model", help="Path to the pre-trained model", required=True)
@@ -80,10 +90,11 @@ if __name__ == "__main__":
     # create model
     model = Word2Vec.load_word2vec_format(args.model, binary=args.binary, unicode_errors='ignore')
     words = model.index2word
+    words_shuffle = words.copy()
     base_url = "/word2vec"
     api.add_resource(Model, base_url+"/model")
     api.add_resource(Vocab, base_url+"/vocab")
     api.add_resource(VocabSize, base_url + "/vocab_size")
 
     # start web
-    app.run(host=args.host, port=args.port, debug=False)  # debug=True
+    app.run(host=args.host, port=args.port, debug=True)  # debug=True
