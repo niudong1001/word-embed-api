@@ -47,6 +47,7 @@ def fetch_infer_words(positive_words, negative_words, topn=5):
     res = json.loads(req.read())
     return res
 
+
 def fetch_similarity(word_a, word_b):
     url = baseurl + "similarity?word_a="+urllib.parse.quote(word_a)+"&word_b="+urllib.parse.quote(word_b)
     req = urllib.request.urlopen(url)

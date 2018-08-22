@@ -24,8 +24,16 @@ def verify_words_exist(words):
 
 def create_error(word):
     return {
-            "error": "Word '"+word+"' is not exist in the model!"
-        }
+        "code": 400,
+        "error": "Word '"+word+"' is not exist in the model!"
+    }
+
+
+def create_exception_error(e):
+    return {
+        "code": str(e.code),
+        "error": str(e.data["message"])
+    }
 
 
 class MyEncoder(json.JSONEncoder):
@@ -54,6 +62,7 @@ class Model(Resource):
                 return create_error(w)
         except BaseException as e:
             print("Exception of model get: ", e)
+            return create_exception_error(e)
 
 
 class Vocab(Resource):
@@ -76,6 +85,7 @@ class Vocab(Resource):
             return res
         except BaseException as e:
             print("Exception of vocab get: ", e)
+            return create_exception_error(e)
 
 
 class VocabSize(Resource):
@@ -85,14 +95,15 @@ class VocabSize(Resource):
             return size
         except BaseException as e:
             print("Exception of vocab get: ", e)
+            return create_exception_error(e)
 
 
 class MostSimilar(Resource):
     def get(self):
         try:
             parse = reqparse.RequestParser()
-            parse.add_argument("positive_words", type=str, help="Positive words to query", required=True)
-            parse.add_argument("negative_words", type=str, help="Negative words to query")
+            parse.add_argument("positive_words", type=str, help="Positive words is a sets of words(split with camma) or one word", required=True)
+            parse.add_argument("negative_words", type=str, help="Negative words is a word to query")
             parse.add_argument("topn", type=int, help="Get top n similar words", default=5)
             _args = parse.parse_args()
             positive_words = _args["positive_words"].split(",")
@@ -108,14 +119,15 @@ class MostSimilar(Resource):
                 return create_error(w)
         except BaseException as e:
             print("Exception of inference get: ", e)
+            return create_exception_error(e)
 
 
 class Similarity(Resource):
     def get(self):
         try:
             parse = reqparse.RequestParser()
-            parse.add_argument("word_a", type=str, help="Word_a to query", required=True)
-            parse.add_argument("word_b", type=str, help="Word_b to query", required=True)
+            parse.add_argument("word_a", type=str, help="word_a is a required str query", required=True)
+            parse.add_argument("word_b", type=str, help="word_b is a required str query", required=True)
             _args = parse.parse_args()
             word_a = _args["word_a"]
             word_b = _args["word_b"]
@@ -127,6 +139,7 @@ class Similarity(Resource):
                 return create_error(w)
         except BaseException as e:
             print("Exception of inference get: ", e)
+            return create_exception_error(e)
 
 
 if __name__ == "__main__":
@@ -148,6 +161,7 @@ if __name__ == "__main__":
     model = Word2Vec.load_word2vec_format(args.model, binary=args.binary, unicode_errors='ignore')
     print("Finished load")
 
+    # get words
     words = model.index2word
     words_shuffle = words.copy()
 
@@ -159,4 +173,4 @@ if __name__ == "__main__":
     api.add_resource(Similarity, base_url + "/similarity")
 
     # start web
-    app.run(host=args.host, port=args.port, debug=False)  # debug=True
+    app.run(host=args.host, port=args.port, debug=True)  # debug=True

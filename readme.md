@@ -1,5 +1,7 @@
 # Word Embedding Api
 
+Web api for getting embed data.
+
 ## Dependency
 
 ```bash
@@ -11,15 +13,17 @@ gensim==0.12.3
 ## Usage
 
 1. Start server：
-   - Use `vec`: `python embed_server.py --model ./data/wiki.zh.test.vec`
-   - Use `bin`: `python embed_server.py --model *.bin --binary`
 
- > change to your own *.vec or *.bin file
+- Use `vec`: `python embed_server.py --model ./data/wiki.zh.test.vec`
+- Use `bin`: `python embed_server.py --model *.bin --binary`
 
-2. Get embed data by python:
+ > Change to your own *.vec or *.bin file
+
+2. Fetch embed data by python:
 
 ```python
 from embed_api import fetch_model, fetch_vocab, fetch_vocab_size, fetch_most_sim_words, fetch_infer_words, fetch_similarity
+
 print(fetch_model(word="name"))  # [-0.014032557606697083, -0.01409541629254818,...]
 print(fetch_vocab(page_number=0, page_size=100))  # ['</s>', '，', '的', ...]
 print(fetch_vocab_size())  # 99
@@ -28,11 +32,11 @@ print(fetch_infer_words(positive_words=["日", "月"], negative_words=["上"])) 
 print(fetch_similarity(word_a="a", word_b="the"))  # 0.8761178251873356
 ```
 
-3. Get embed data by curl:
+3. Fetch embed data by curl:
 
 ```bash
 curl http://127.0.0.1:5555/word2vec/model?word=the
-curl http://127.0.0.1:5555/word2vec/vocab?page_number=0&page_size=50
+curl http://127.0.0.1:5555/word2vec/vocab?page_number=0&page_size=50&shuffle=False
 curl http://127.0.0.1:5555/word2vec/vocab_size
 curl http://127.0.0.1:5555/word2vec/most_similar?positive_words=the,a&negative_words=an&topn=5
 curl http://127.0.0.1:5555/word2vec/similarity?word_a=the&word_b=a
