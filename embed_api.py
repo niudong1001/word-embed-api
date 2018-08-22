@@ -32,7 +32,7 @@ def fetch_vocab_size():
 
 
 def fetch_most_sim_words(word, topn=5):
-    url = baseurl + "similarity?word="+urllib.parse.quote(word)+"&topn="+str(topn)
+    url = baseurl + "most_similar?positive_words="+urllib.parse.quote(word)+"&topn="+str(topn)
     req = urllib.request.urlopen(url)
     res = json.loads(req.read())
     return res
@@ -41,8 +41,14 @@ def fetch_most_sim_words(word, topn=5):
 def fetch_infer_words(positive_words, negative_words, topn=5):
     pws = ",".join(positive_words)
     nws = ",".join(negative_words)
-    url = baseurl + "inference?positive_words="+urllib.parse.quote(pws)+\
+    url = baseurl + "most_similar?positive_words="+urllib.parse.quote(pws)+\
           "&negative_words="+urllib.parse.quote(nws)+"&topn="+str(topn)
+    req = urllib.request.urlopen(url)
+    res = json.loads(req.read())
+    return res
+
+def fetch_similarity(word_a, word_b):
+    url = baseurl + "similarity?word_a="+urllib.parse.quote(word_a)+"&word_b="+urllib.parse.quote(word_b)
     req = urllib.request.urlopen(url)
     res = json.loads(req.read())
     return res
@@ -53,4 +59,5 @@ if __name__ == "__main__":
     print(fetch_vocab(page_number=0, shuffle="True"))
     print(fetch_vocab_size())
     print(fetch_most_sim_words("the"))
-    print(fetch_infer_words(["日", "月"], ["the"]))
+    print(fetch_infer_words(["日", "月"], ["上"]))
+    print(fetch_similarity("a", "the"))

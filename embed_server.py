@@ -87,37 +87,41 @@ class VocabSize(Resource):
             print("Exception of vocab get: ", e)
 
 
-class Similarity(Resource):
-    def get(self):
-        try:
-            parse = reqparse.RequestParser()
-            parse.add_argument("word", type=str, help="Word to query", required=True)
-            parse.add_argument("topn", type=int, help="Get top n similar words", default=5)
-            _args = parse.parse_args()
-            valid, w = verify_words_exist([_args["word"]])
-            if valid:
-                sims = model.most_similar(_args["word"], topn=_args["topn"])
-                return sims
-            else:
-                return create_error(w)
-        except BaseException as e:
-            print("Exception of similarity get: ", e)
-
-
-class Inference(Resource):
+class MostSimilar(Resource):
     def get(self):
         try:
             parse = reqparse.RequestParser()
             parse.add_argument("positive_words", type=str, help="Positive words to query", required=True)
-            parse.add_argument("negative_words", type=str, help="Negative words to query", required=True)
+            parse.add_argument("negative_words", type=str, help="Negative words to query")
             parse.add_argument("topn", type=int, help="Get top n similar words", default=5)
             _args = parse.parse_args()
             positive_words = _args["positive_words"].split(",")
-            negative_words = _args["negative_words"].split(",")
+            if _args["negative_words"] is not None:
+                negative_words = _args["negative_words"].split(",")
+            else:
+                negative_words = []
             valid, w = verify_words_exist(positive_words+negative_words)
             if valid:
                 infers = model.most_similar(positive=positive_words, negative=negative_words, topn=_args["topn"])
                 return infers
+            else:
+                return create_error(w)
+        except BaseException as e:
+            print("Exception of inference get: ", e)
+
+class Similarity(Resource):
+    def get(self):
+        try:
+            parse = reqparse.RequestParser()
+            parse.add_argument("word_a", type=str, help="Word_a to query", required=True)
+            parse.add_argument("word_b", type=str, help="Word_b to query", required=True)
+            _args = parse.parse_args()
+            word_a = _args["word_a"]
+            word_b = _args["word_b"]
+            valid, w = verify_words_exist([word_a, word_b])
+            if valid:
+                sim = model.similarity(word_a, word_b)
+                return sim
             else:
                 return create_error(w)
         except BaseException as e:
@@ -150,8 +154,8 @@ if __name__ == "__main__":
     api.add_resource(Model, base_url+"/model")
     api.add_resource(Vocab, base_url+"/vocab")
     api.add_resource(VocabSize, base_url + "/vocab_size")
+    api.add_resource(MostSimilar, base_url + "/most_similar")
     api.add_resource(Similarity, base_url + "/similarity")
-    api.add_resource(Inference, base_url + "/inference")
 
     # start web
-    app.run(host=args.host, port=args.port, debug=False)  # debug=True
+    app.run(host=args.host, port=args.port, debug=True)  # debug=True
