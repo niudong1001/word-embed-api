@@ -14,7 +14,7 @@ gensim==0.12.3
    - Use `vec`: `python embed_server.py --model ./data/wiki.zh.test.vec`
    - Use `bin`: `python embed_server.py --model *.bin --binary`
 
-*change to your own *.vec or *.bin file*
+**change to your own *.vec or *.bin file**
 
 2. Get embed data:
 
