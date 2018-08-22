@@ -173,4 +173,4 @@ if __name__ == "__main__":
     api.add_resource(Similarity, base_url + "/similarity")
 
     # start web
-    app.run(host=args.host, port=args.port, debug=True)  # debug=True
+    app.run(host=args.host, port=args.port, debug=False)  # debug=True
