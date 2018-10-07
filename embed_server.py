@@ -159,7 +159,7 @@ if __name__ == "__main__":
     # create model
     print("Loading model...")
     model = Word2Vec.load_word2vec_format(args.model, binary=args.binary, unicode_errors='ignore')
-    print("Finished load")
+    print("Finished load.")
 
     # get words
     words = model.index2word
