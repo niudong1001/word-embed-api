@@ -15,12 +15,12 @@ You can use `pip install -r requirements.txt` to install all dependency.
 
 ## Usage
 
-1. Start a server, Please change to your own `*.vec` or `*.bin` file.
+- **Start a server**. Please change to your own `*.vec` or `*.bin` file.
 
-- Use `vec` data: `python embed_server.py --model ./data/wiki.zh.test.vec`
-- Use `bin` data: `python embed_server.py --model *.bin --binary`
+  - Use `vec` data: `python embed_server.py --model ./data/wiki.zh.test.vec`
+  - Use `bin` data: `python embed_server.py --model *.bin --binary`
 
-2. Fetch embed data by python, you can use `test_api.py` to test.
+- **Fetch embed data by python**. You can use `test_api.py` to test.
 
 ```python
 from embed_api import fetch_model, fetch_vocab, fetch_vocab_size, fetch_most_sim_words, fetch_infer_words, fetch_similarity
@@ -33,7 +33,7 @@ print(fetch_infer_words(positive_words=["日", "月"], negative_words=["上"])) 
 print(fetch_similarity(word_a="a", word_b="the"))  # 0.8761178251873356
 ```
 
-3. Fetch embed data by curl:
+- **Fetch embed data by curl**.
 ```bash
 curl "http://127.0.0.1:5555/word2vec/model?word=the"
 curl "http://127.0.0.1:5555/word2vec/vocab?page_number=0&page_size=50&shuffle=False"
